@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>PIER-Studie – TAN-Generierung</title>
+	<link th:href="@{/styles/main.css}" rel="stylesheet" />
+</head>
+<body>
+    <h1>PIER-Studie – TANs generieren</h1>
+
+    <form method="post">
+		<div class="form-wrapper">
+		  <!-- Zeile 2 -->
+		  <div class="row">
+			<label for="count">Anzahl TANs:</label><br>
+			     <input type="number" id="count" name="count" min="1" max="1000">
+			     <button type="submit" name = "aktion" value = "generate">TANs generieren</button>
+		  </div>
+
+		  <!-- Zeile 3 -->
+		  <div class="row">
+		    <label for="aktion">Vorhandene TANs anzeigen:</label>
+			<button type="submit" name = "aktion" value = "show">TANs anzeigen</button>
+		  </div>
+		  <div class="row">
+		  	<label for="welcometext">Welcometext:</label><br>
+		  	<textarea id="welcomeText" name="welcomeText" rows="6" cols = "80" th:text="${oldWelcomeText}"></textarea>
+		    <button type="submit" name = "aktion" value = "changeWelcomeText">change welcome text </button>
+		  </div>
+		  <div class="row">
+		  		  	<label for="confirmationText">Confirmation text:</label><br>
+		  		  	<textarea id="confirmationText" name="confirmationText" rows="6" cols = "80" th:text="${oldconfirmationText}"></textarea>
+		  		    <button type="submit" name = "aktion" value = "changeConfirmationText">change confirmation text</button>
+		  </div>
+		  <div class="row">
+			<label for="newPassword1">Neues Passwort:</label>
+			<input type="password" id="newPassword1" name="newPassword1">
+		  </div>
+		  <div class="row">
+		  			<label for="newPassword2">Wiederholung des Passworts:</label>
+		  			<input type="password" id="newPassword2" name="newPassword2">
+					<button type="submit" name = "aktion" value = "changePassword">Passwort ändern</button>
+		 </div>
+		</div>
+    </form>
+	
+	</body>
+</html>

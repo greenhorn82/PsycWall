@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>PIER-Studie – TAN-Eingabe</title>
+</head>
+<body>
+	<div th:utext="${contentHtml}"></div>
+
+    <form action="submit-tan" method="post">
+        <label for="tan">TAN:</label>
+        <input type="text" id="tan" name="tan" required>
+		<input type="hidden" id="vpCode" name="vpCode" th:value="${vpCode}"  required>
+        <br><br>
+        <button type="submit">Absenden</button>
+    </form>
+</body>
+</html>

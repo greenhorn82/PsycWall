@@ -1,0 +1,26 @@
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;              /* Abstand zwischen den Zeilen */
+  max-width: 500px;
+}
+
+.row {
+  display: flex;
+  align-items: center;   /* vertikale Ausrichtung */
+  gap: 10px;             /* Abstand zwischen Elementen */
+}
+
+.row label {
+  width: 100px;          /* feste Breite für saubere Ausrichtung */
+}
+
+.row input {
+  flex: 1;               /* Input füllt verfügbaren Platz */
+  padding: 6px;
+}
+
+.row button {
+  padding: 6px 12px;
+}
+

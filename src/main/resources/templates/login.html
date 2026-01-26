@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+</head>
+<body>
+  <h1>Login</h1>
+
+  <form method="post">
+    <label for="password">Passwort:</label><br />
+    <input type="password" id="password" name="password" required /><br /><br />
+
+    <button type="submit" name="aktion" value="login">Anmelden</button>
+  </form>
+  <p th:text="${message}">Fallback</p>
+
+</body>
+</html>
