@@ -116,7 +116,16 @@ public class PsycWallController {
     	
       
         if(aktion.equals("generate") && passValid) {
-        	int count = Integer.parseInt(params.get("count"));
+        	
+        	int count = 0;
+        	String message = "";
+        	try {
+        		 count = Integer.parseInt(params.get("count"));
+        	}catch(NumberFormatException  e) {
+        		count = 0;
+        		message = "Anzahl der Strings nicht erkannt!<br>";
+        	}
+        	
         	String[] tan_list = new String[count];
         	for(int i = 0;  i < count; i++) {
         	
@@ -124,7 +133,7 @@ public class PsycWallController {
         			rc.storeKey("tan_" + tan_list[i], -1);
         }
         	model.addAttribute("message", 
-        		"Es wurden " + count + " TANs generiert..." + String.join("\r\n", tan_list));
+        			message + "Es wurden " + count + " TANs generiert..." + String.join("\r\n", tan_list));
             return "generate-tans_result";
 
         }
@@ -171,8 +180,7 @@ public class PsycWallController {
     		String errorMess = rc.getKey("conf_noValidTan");
     		rc.storeKey(request.toString() + request.getHeader("X-Forwarded-For"), -1);
     		if(errorMess == null) {
-    			errorMess = "<html><body><h1>404 - Tan fehlt</h1></body></html>" + 
-    					Thread.currentThread().getId();
+    			errorMess = "<html><body><h1>404 - Tan fehlt</h1></body></html>" ;
     		}
     		return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .contentType(MediaType.TEXT_HTML)

@@ -227,7 +227,7 @@ class PsycWallControllerTest {
                 .param("aktion", "generate")
                 .param("count", "abc"))
         .andExpect(status().isOk())
-        .andExpect(view().name("generateAdmin"));
+        .andExpect(view().name("generate-tans_result"));
     }
     
 }
