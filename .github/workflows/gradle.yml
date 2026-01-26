@@ -31,5 +31,5 @@ jobs:
           java-version: "21"
           cache: gradle  # Gradle-Cache via setup-java wird unterstützt :contentReference[oaicite:3]{index=3}
 
-      - name: Run tests
-        run: ./gradlew test
+     - name: Run tests
+       run: ./gradlew test
