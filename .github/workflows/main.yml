@@ -42,11 +42,17 @@ jobs:
 
       - name: Tag as latest (optional)
         run: |
+          REPO_LC="$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')"
+          TAG="${GITHUB_REF_NAME}"
+        
           docker tag \
             ghcr.io/${REPO_LC}:${{ steps.vars.outputs.tag }} \
             ghcr.io/${REPO_LC}:latest
 
       - name: Push images
         run: |
+          REPO_LC="$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')"
+          TAG="${GITHUB_REF_NAME}"
+        
           docker push ghcr.io/${REPO_LC}:${{ steps.vars.outputs.tag }}
           docker push ghcr.io/${REPO_LC}:latest
