@@ -1,0 +1,47 @@
+name: Build & Push Spring Boot Image (release tags)
+
+on:
+  push:
+    tags:
+      - "*release*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21   # oder deine Version
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Extract tag
+        id: vars
+        run: echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Build image with Gradle
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.tag }}
+          ./gradlew clean bootBuildImage --imageName=$IMAGE_NAME
+
+      - name: Tag as latest (optional)
+        run: |
+          docker tag \
+            ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.tag }} \
+            ghcr.io/${{ github.repository }}:latest
+
+      - name: Push images
+        run: |
+          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.tag }}
+          docker push ghcr.io/${{ github.repository }}:latest
