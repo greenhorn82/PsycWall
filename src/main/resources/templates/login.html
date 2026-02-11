@@ -3,18 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link th:href="@{/styles/main.css}" rel="stylesheet" />
+
   <title>Login</title>
 </head>
 <body>
-  <h1>Login</h1>
+	<main class = "page">
+		<header class="page-header">
 
+  <h1>Login</h1>
+	</header>
+	<section class="card">
   <form method="post">
     <label for="password">Passwort:</label><br />
     <input type="password" id="password" name="password" required /><br /><br />
 
-    <button type="submit" name="aktion" value="login">Anmelden</button>
+    <button type="submit" name="aktion" value="login" class="btn">Anmelden</button>
   </form>
+  </section>
   <p th:text="${message}">Fallback</p>
-
+</main>
 </body>
 </html>

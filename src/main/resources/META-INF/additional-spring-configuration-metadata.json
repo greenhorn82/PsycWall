@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "app.constants.saltHash",
+  "type": "java.lang.String",
+  "description": "String used to generate an individual salted value 'app.constants.saltHash'"
+}]}

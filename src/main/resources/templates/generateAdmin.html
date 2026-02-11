@@ -1,48 +1,98 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>PIER-Studie – TAN-Generierung</title>
-	<link th:href="@{/styles/main.css}" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PIER-Studie – TAN-Generierung</title>
+
+  <link th:href="@{/styles/main.css}" rel="stylesheet" />
 </head>
+
 <body>
-    <h1>PIER-Studie – TANs generieren</h1>
+  <main class="page">
+    <header class="page-header">
+      <h1>PIER-Studie – TANs generieren</h1>
+      <p class="subtitle">Verwaltung von TANs, Texten und Passwort.</p>
+    </header>
 
-    <form method="post">
-		<div class="form-wrapper">
-		  <!-- Zeile 2 -->
-		  <div class="row">
-			<label for="count">Anzahl TANs:</label><br>
-			     <input type="number" id="count" name="count" min="1" max="1000">
-			     <button type="submit" name = "aktion" value = "generate">TANs generieren</button>
-		  </div>
+    <section class="card">
+      <form method="post" class="form">
+        <!-- TAN generieren -->
+        <fieldset class="fieldset">
+          <legend>TANs</legend>
 
-		  <!-- Zeile 3 -->
-		  <div class="row">
-		    <label for="aktion">Vorhandene TANs anzeigen:</label>
-			<button type="submit" name = "aktion" value = "show">TANs anzeigen</button>
-		  </div>
-		  <div class="row">
-		  	<label for="welcometext">Welcometext:</label><br>
-		  	<textarea id="welcomeText" name="welcomeText" rows="6" cols = "80" th:text="${oldWelcomeText}"></textarea>
-		    <button type="submit" name = "aktion" value = "changeWelcomeText">change welcome text </button>
-		  </div>
-		  <div class="row">
-		  		  	<label for="confirmationText">Confirmation text:</label><br>
-		  		  	<textarea id="confirmationText" name="confirmationText" rows="6" cols = "80" th:text="${oldconfirmationText}"></textarea>
-		  		    <button type="submit" name = "aktion" value = "changeConfirmationText">change confirmation text</button>
-		  </div>
-		  <div class="row">
-			<label for="newPassword1">Neues Passwort:</label>
-			<input type="password" id="newPassword1" name="newPassword1">
-		  </div>
-		  <div class="row">
-		  			<label for="newPassword2">Wiederholung des Passworts:</label>
-		  			<input type="password" id="newPassword2" name="newPassword2">
-					<button type="submit" name = "aktion" value = "changePassword">Passwort ändern</button>
-		 </div>
-		</div>
-    </form>
-	
-	</body>
+          <div class="grid">
+            <div class="field">
+              <label for="count">Anzahl TANs</label>
+              <input type="number" id="count" name="count" min="1" max="1000" placeholder="z.B. 50" />
+              <p class="hint">Erlaubt: 1–1000</p>
+            </div>
+
+            <div class="actions">
+              <button class="btn primary" type="submit" name="aktion" value="generate">
+                TANs generieren
+              </button>
+
+              <button class="btn" type="submit" name="aktion" value="show">
+                Vorhandene TANs anzeigen
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Texte -->
+        <fieldset class="fieldset">
+          <legend>Texte</legend>
+
+          <div class="field">
+            <label for="welcomeText">Welcometext</label>
+            <textarea id="welcomeText" name="welcomeText" rows="6" th:text="${oldWelcomeText}"></textarea>
+            <div class="actions">
+              <button class="btn" type="submit" name="aktion" value="changeWelcomeText">
+                Welcometext speichern
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="confirmationText">Confirmation text</label>
+            <textarea id="confirmationText" name="confirmationText" rows="6" th:text="${oldconfirmationText}"></textarea>
+            <div class="actions">
+              <button class="btn" type="submit" name="aktion" value="changeConfirmationText">
+                Confirmation text speichern
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Passwort -->
+        <fieldset class="fieldset">
+          <legend>Passwort</legend>
+
+          <div class="grid two">
+            <div class="field">
+              <label for="newPassword1">Neues Passwort</label>
+              <input type="password" id="newPassword1" name="newPassword1" autocomplete="new-password" />
+            </div>
+
+            <div class="field">
+              <label for="newPassword2">Passwort wiederholen</label>
+              <input type="password" id="newPassword2" name="newPassword2" autocomplete="new-password" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn danger" type="submit" name="aktion" value="changePassword">
+              Passwort ändern
+            </button>
+          </div>
+        </fieldset>
+
+        <footer class="footer">
+          <small>PIER-Studie · Admin-Ansicht</small>
+        </footer>
+      </form>
+    </section>
+  </main>
+</body>
 </html>

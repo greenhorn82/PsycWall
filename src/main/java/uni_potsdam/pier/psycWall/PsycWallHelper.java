@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 
 
@@ -14,11 +15,19 @@ public class PsycWallHelper {
 	
     private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final SecureRandom random = new SecureRandom();
+    @Value("${app.constants.saltHash}")
+    private static String salt;
+    
+    public static String hashString(String input) {
+    	
+    	return hashString(input, salt);
+    	
+    }
 
-	    public static String hashString(String input) {
+	    public static String hashString(String input, String salt) {
 	        try {
 	            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-	            byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+	            byte[] hashBytes = digest.digest((input + salt).getBytes(StandardCharsets.UTF_8));
 	            return bytesToHex(hashBytes);
 	        } catch (NoSuchAlgorithmException e) {
 	            throw new RuntimeException("SHA-256 algorithm not available", e);

@@ -3,16 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>PIER-Studie – TAN-Eingabe</title>
+	<link th:href="@{/styles/main.css}" rel="stylesheet" />
+
 </head>
 <body>
+	<main class = "page">
+	<header class="page-header">
 	<div th:utext="${contentHtml}"></div>
-
+	</header>
+	<section class="card">
     <form action="submit-tan" method="post">
+		<div class="form-group">
         <label for="tan">TAN:</label>
         <input type="text" id="tan" name="tan" required>
+		</div>
 		<input type="hidden" id="vpCode" name="vpCode" th:value="${vpCode}"  required>
-        <br><br>
-        <button type="submit">Absenden</button>
+		<div class="form-group">
+        <button type="submit" class="btn">Absenden</button>
+		</div>
     </form>
+	</section>
+	</main>
 </body>
 </html>

@@ -38,7 +38,7 @@ public class PsycWallController {
         ip = ip.split(",")[0];
     }
 
-    return "IP:" + ip;
+    return "IP:" + PsycWallHelper.hashString(ip);
     }
     
   

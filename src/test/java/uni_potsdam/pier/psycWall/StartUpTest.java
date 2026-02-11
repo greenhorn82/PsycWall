@@ -23,7 +23,7 @@ class StartUpTest {
 
         sut.onApplicationReady(null);
 
-        verify(rc).storeKey("conf_WelcomeText", "<h1>PsycWall</h1>Please enter tan to proceed!");
+        verify(rc).storeKey("conf_WelcomeText", "<h1>PsycWall</h1>Please enter tan to proceed:");
         verify(rc, never()).storeKey(eq("conf_confirmationText"), anyString());
         verify(rc, never()).storeKey(eq("conf_pass"), anyString());
     }
@@ -60,6 +60,25 @@ class StartUpTest {
        
     }
 
+    
+    @Test
+    void throwsWhenPasswordMissingAndStartPassSetSecret() {
+    	RedisConnect rc = mock(RedisConnect.class);
+        when(rc.getKey("conf_WelcomeText")).thenReturn("already");
+        when(rc.getKey("conf_confirmationText")).thenReturn("already");
+        when(rc.getKey("conf_pass")).thenReturn(null);
+
+        LifecycleListener sut = new LifecycleListener(rc, "secret");
+
+        assertThatThrownBy(() -> sut.onApplicationReady(null))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("STARTPASS in .env not set. ");
+
+        verify(rc, never()).storeKey(eq("conf_pass"), anyString());
+       
+    }
+
+    
     @Test
     void storesHashedPasswordWhenMissingAndStartPassSet() {
     	RedisConnect rc = mock(RedisConnect.class);
@@ -67,7 +86,7 @@ class StartUpTest {
         when(rc.getKey("conf_confirmationText")).thenReturn("already");
         when(rc.getKey("conf_pass")).thenReturn("");
 
-        LifecycleListener sut = new LifecycleListener(rc, "secret");
+        LifecycleListener sut = new LifecycleListener(rc, "real_secret");
 
         sut.onApplicationReady(null);
 
@@ -75,11 +94,13 @@ class StartUpTest {
         ArgumentCaptor<String> passCaptor = ArgumentCaptor.forClass(String.class);
         verify(rc).storeKey(eq("conf_pass"), passCaptor.capture());
         assertThat(passCaptor.getValue()).isEqualTo(
-        		"2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b"); 
+        		"af05bc884941536df15290c650b7b4a8065eaf5f43f2c4e906513a0c641d05ef"); 
         verify(rc, never()).storeKey(eq("conf_confirmationText"), anyString());
         verify(rc, never()).storeKey(eq("conf_WelcomeText"), anyString());
         
     }
+  
+  
 
     @Test
     void doesNotOverrideExistingValues() {

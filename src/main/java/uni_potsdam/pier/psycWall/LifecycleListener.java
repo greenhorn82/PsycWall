@@ -21,7 +21,7 @@ public class LifecycleListener {
 	public void onApplicationReady(ApplicationReadyEvent event) {
 		
 		if(rc.getKey("conf_WelcomeText") == null || rc.getKey("conf_WelcomeText").equals("")) {
-			rc.storeKey("conf_WelcomeText", "<h1>PsycWall</h1>Please enter tan to proceed!");
+			rc.storeKey("conf_WelcomeText", "<h1>PsycWall</h1>Please enter tan to proceed:");
 			System.out.println("Welcome text set to default!");
 		}
 		if(rc.getKey("conf_confirmationText") == null || rc.getKey("conf_confirmationText").equals("")) {
@@ -29,7 +29,7 @@ public class LifecycleListener {
 			System.out.println("Confirmation text set to default!");
 		}
 		if(rc.getKey("conf_pass") == null || rc.getKey("conf_pass").equals("")) {
-			if(startPass == null || startPass.equals("")) {
+			if(startPass == null || startPass.equals("") || startPass.equals("secret")) {
 				String message = "STARTPASS in .env not set. ";
 		        System.err.println(message);
 		        throw new IllegalStateException(message);
