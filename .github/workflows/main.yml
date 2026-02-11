@@ -1,6 +1,7 @@
 name: Build & Push Spring Boot Image (release tags)
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "*release*"
