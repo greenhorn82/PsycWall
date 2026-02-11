@@ -33,16 +33,20 @@ jobs:
 
       - name: Build image with Gradle
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.tag }}
+
+         REPO_LC="$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')"
+         TAG="${GITHUB_REF_NAME}"
+
+          IMAGE_NAME=ghcr.io/${REPO_LC}:${{ steps.vars.outputs.tag }}
           ./gradlew clean bootBuildImage --imageName=$IMAGE_NAME
 
       - name: Tag as latest (optional)
         run: |
           docker tag \
-            ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.tag }} \
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${REPO_LC}:${{ steps.vars.outputs.tag }} \
+            ghcr.io/${REPO_LC}:latest
 
       - name: Push images
         run: |
-          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.tag }}
-          docker push ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${REPO_LC}:${{ steps.vars.outputs.tag }}
+          docker push ghcr.io/${REPO_LC}:latest
