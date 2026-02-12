@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PIER-Studie – TAN-Generierung</title>
+  <title>PsycWall - Administration</title>
 
   <link th:href="@{/styles/main.css}" rel="stylesheet" />
 </head>
@@ -11,7 +11,7 @@
 <body>
   <main class="page">
     <header class="page-header">
-      <h1>PIER-Studie – TANs generieren</h1>
+      <h1>PsycWall - Administration</h1>
       <p class="subtitle">Verwaltung von TANs, Texten und Passwort.</p>
     </header>
 
@@ -55,7 +55,7 @@
           </div>
 
           <div class="field">
-            <label for="confirmationText">Confirmation text</label>
+            <label for="confirmationText">Confirmation page</label>
             <textarea id="confirmationText" name="confirmationText" rows="6" th:text="${oldconfirmationText}"></textarea>
             <div class="actions">
               <button class="btn" type="submit" name="aktion" value="changeConfirmationText">
@@ -63,6 +63,15 @@
               </button>
             </div>
           </div>
+		  <div class="field">
+		              <label for="confirmationText">Incorrect Tan page</label>
+		              <textarea id="incorrectTanText" name="incorrectTanText" rows="6" th:text="${oldincorrectTanTextText}"></textarea>
+		              <div class="actions">
+		                <button class="btn" type="submit" name="aktion" value="changeIncorrectTanText">
+		                  Incorrect Tan page
+		                </button>
+		              </div>
+		            </div>
         </fieldset>
 
         <!-- Passwort -->

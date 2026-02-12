@@ -171,6 +171,27 @@ class PsycWallControllerTest {
     }
     
     @Test
+    void changeWrongTanText_loggedIn_sanitizes_stores_setsModel_andReturnsResult() throws Exception {
+        PolicyFactory policy = mock(PolicyFactory.class);
+        when(policy.sanitize("<b>x</b><script>bad</script>")).thenReturn("<b>x</b>");
+
+        try (MockedStatic<PsycWallHelper> helper = Mockito.mockStatic(PsycWallHelper.class)) {
+            helper.when(PsycWallHelper::genPsycWallPolicy).thenReturn(policy);
+
+            mockMvc.perform(post("/generate-tans")
+                    .with(withSessionAttr("loginSuccessful", "erfolg"))
+                    .param("aktion", "changeIncorrectTanText")
+                    .param("incorrectTanText", "<b>x</b><script>bad</script>"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("generate-tans_result"))
+                .andExpect(model().attribute("message", "Incorrect Tan page content updated:"))
+                .andExpect(model().attribute("contentHtml", "<b>x</b>"));
+
+            verify(rc).storeKey("conf_incorrectTanText", "<b>x</b>");
+        }
+    }
+    
+    @Test
     void changeConfirmationText_loggedIn_sanitizes_stores_setsModel_andReturnsResult() throws Exception {
         PolicyFactory policy = mock(PolicyFactory.class);
         when(policy.sanitize("ok<script>bad</script>")).thenReturn("ok");
@@ -228,6 +249,61 @@ class PsycWallControllerTest {
                 .param("count", "abc"))
         .andExpect(status().isOk())
         .andExpect(view().name("generate-tans_result"));
+    }
+    
+    @Test
+    void submitTan_whenTanNotAllowed_setsIncorrectText_andReturnsAfterTanView() throws Exception {
+        // given
+        when(rc.getKey("tan_123456")).thenReturn(null);
+        when(rc.getKey("conf_incorrectTanText")).thenReturn("INCORRECT");
+
+        // when/then
+        mockMvc.perform(post("/submit-tan")
+                        .param("tan", "123456"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("afterTan"))
+                .andExpect(model().attribute("contentHtml", "INCORRECT"));
+
+        // verify: bei ungültig keine Session speichern, kein remove
+        verify(rc, never()).storeKey(anyString(), anyInt());
+        verify(rc, never()).removeKey(anyString());
+    }
+
+    @Test
+    void submitTan_whenTanAllowed_storesSession_removesTan_andReturnsConfirmation() throws Exception {
+        // given
+        when(rc.getKey("tan_999999")).thenReturn("zugelassen");
+        when(rc.getKey("conf_confirmationText")).thenReturn("OK");
+
+        // when/then
+        mockMvc.perform(post("/submit-tan")
+                        .param("tan", "999999"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("afterTan"))
+                .andExpect(model().attribute("contentHtml", "OK"));
+
+        // verify: TAN-Key wird entfernt
+        verify(rc).removeKey("tan_999999");
+
+        // verify: Session-Key wird gespeichert (genSessionId(request) ist dynamisch => nur prüfen dass storeKey aufgerufen wurde)
+        verify(rc).storeKey(anyString(), anyInt());
+    }
+
+    @Test
+    void submitTan_whenTanStatusDifferentThanZugelassen_treatedAsNotAllowed() throws Exception {
+        // given
+        when(rc.getKey("tan_111111")).thenReturn("irgendwas");
+        when(rc.getKey("conf_incorrectTanText")).thenReturn("INCORRECT");
+
+        // when/then
+        mockMvc.perform(post("/submit-tan")
+                        .param("tan", "111111"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("afterTan"))
+                .andExpect(model().attribute("contentHtml", "INCORRECT"));
+
+        verify(rc, never()).removeKey(anyString());
+        verify(rc, never()).storeKey(anyString(), anyInt());
     }
     
 }

@@ -66,13 +66,14 @@ public class PsycWallController {
     	String aktStatus = rc.getKey("tan_" +  tan);
     	if (aktStatus == null || aktStatus.compareTo("zugelassen") != 0) {
     		aktStatus = "nicht zugelassen";
-    		
+    		model.addAttribute("contentHtml", rc.getKey("conf_incorrectTanText"));
     	} else {
            	rc.storeKey(genSessionId(request) , MAXSESSIONTIME);
            	rc.removeKey("tan_" +  tan);
+           	model.addAttribute("contentHtml", rc.getKey("conf_confirmationText"));
         }
-    	model.addAttribute("contentHtml", rc.getKey("conf_confirmationText"));
-    	model.addAttribute("message", "TAN : " + tan + " ist " + aktStatus);
+    	
+    	//model.addAttribute("message", "TAN : " + tan + " ist " + aktStatus);
         return "afterTan";
         		
     }
@@ -89,7 +90,8 @@ public class PsycWallController {
     	 
     	model.addAttribute("oldWelcomeText", rc.getKey("conf_WelcomeText"));
     	model.addAttribute("oldconfirmationText", rc.getKey("conf_confirmationText"));
-      	
+    	model.addAttribute("oldincorrectTanTextText", rc.getKey("conf_incorrectTanText"));
+
     	if(session == null) {
     		session = request.getSession();
     		return "login";
@@ -154,6 +156,14 @@ public class PsycWallController {
         	model.addAttribute("contentHtml", safeHTML);
             return "generate-tans_result";
 
+        }
+        if(aktion.equals("changeIncorrectTanText") && passValid) {
+        	PolicyFactory policy = PsycWallHelper.genPsycWallPolicy();
+        	String safeHTML = policy.sanitize(params.get("incorrectTanText"));
+        	rc.storeKey("conf_incorrectTanText", safeHTML);
+        	model.addAttribute("message", "Incorrect Tan page content updated:");
+        	model.addAttribute("contentHtml", safeHTML);
+            return "generate-tans_result";
         }
 
         
