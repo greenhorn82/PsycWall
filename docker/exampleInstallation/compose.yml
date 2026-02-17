@@ -1,0 +1,109 @@
+services:
+  psycwall:
+    image: ghcr.io/greenhorn82/psycwall:latest
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks: [backend]
+   
+  redis:
+   image: redis:7-alpine
+   healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
+   ports:
+    - "6379:6379"
+   volumes:
+    - redis-data-psycwall:/data
+   command: redis-server --appendonly yes
+   networks: [backend]
+
+  proxy:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt:ro
+      - ./nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key:ro
+    depends_on:
+      jatos:
+        condition: service_healthy
+    ports:
+      - 80:80
+      - 443:443
+    networks: [backend]
+
+
+  jatos:
+    image: jatos/jatos:latest
+    restart: always
+    ports:
+      - 9000
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      # If you have a base path (if you set 'jatos.urlBasePath') you have to change the URL path here
+      test: ["CMD", "curl", "-f", "http://localhost:9000/ping"]
+      interval: 10s
+      timeout: 2s
+      retries: 1000
+      start_period: 10s
+    environment:
+      JATOS_DB_URL: 'jdbc:mysql://db/jatos?characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC'
+      JATOS_DB_USERNAME: 'jatosuser'
+      JATOS_DB_PASSWORD: 'abc123'
+      JATOS_DB_DRIVER: 'com.mysql.cj.jdbc.Driver'
+      JATOS_SECRET: 'my-secret-secret'
+    command:
+      # If you're running multiple JATOS instances
+      #- '-Djatos.multiNode=true'
+      # Get JATOS' logs to the stdout, e.g. for debugging
+      #- '-Djatos.logs.appender=ASYNCSTDOUT'
+    volumes:
+      - jatos-logs:/opt/jatos/logs
+      - jatos-data:/opt/jatos_data
+      # Configure JATOS by binding a jatos.conf
+      - ./jatos.conf:/opt/jatos/conf/jatos.conf:ro
+    networks: [backend]
+
+  db:
+    image: mysql:latest
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    environment:
+      MYSQL_DATABASE: 'jatos'
+      MYSQL_USER: 'jatosuser'
+      MYSQL_PASSWORD: 'abc123'
+      MYSQL_ROOT_PASSWORD: 'abc123'
+    command:
+      # Deactivate MySQL's binary log (https://www.jatos.org/JATOS-with-MySQL.html)
+      #- '--skip-log-bin'
+    cap_add:
+      # Fix "mbind: Operation not permitted" (https://stackoverflow.com/q/55559386/1278769)
+      - SYS_NICE
+    volumes:
+      - jatos-db:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks: [backend]
+
+networks:
+  backend:
+  
+volumes:
+  redis-data-psycwall:
+  jatos-data:
+  jatos-logs:
+  jatos-db:
